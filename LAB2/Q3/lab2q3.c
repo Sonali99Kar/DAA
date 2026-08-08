@@ -2,165 +2,164 @@
 #include <stdlib.h>
 #include <time.h>
 
-// Helper to copy elements
-void copy_array(int src[], int dest[], int n) {
-    for (int i = 0; i < n; i++) dest[i] = src[i];
-}
-
-// ==========================================
-// 1. STANDARD MERGE SORT (2-WAY SPLIT)
-// ==========================================
-void merge_2way(int arr[], int l, int m, int r) {
-    int n1 = m - l + 1;
-    int n2 = r - m;
-
-    int *L = (int *)malloc(n1 * sizeof(int));
-    int *R = (int *)malloc(n2 * sizeof(int));
-
-    for (int i = 0; i < n1; i++) L[i] = arr[l + i];
-    for (int j = 0; j < n2; j++) R[j] = arr[m + 1 + j];
-
-    int i = 0, j = 0, k = l;
-    while (i < n1 && j < n2) {
-        if (L[i] <= R[j]) arr[k++] = L[i++];
-        else arr[k++] = R[j++];
-    }
-    while (i < n1) arr[k++] = L[i++];
-    while (j < n2) arr[k++] = R[j++];
-
-    free(L);
-    free(R);
-}
-
-void merge_sort_2way(int arr[], int l, int r) {
-    if (l < r) {
-        int m = l + (r - l) / 2;
-        merge_sort_2way(arr, l, m);
-        merge_sort_2way(arr, m + 1, r);
-        merge_2way(arr, l, m, r);
-    }
-}
-
-// ==========================================
-// 2. MODIFIED MERGE SORT (3-WAY SPLIT)
-// ==========================================
-void merge_3way(int arr[], int l, int mid1, int mid2, int r) {
-    int n1 = mid1 - l + 1;
-    int n2 = mid2 - mid1;
-    int n3 = r - mid2;
-
-    int *L = (int *)malloc(n1 * sizeof(int));
-    int *M = (int *)malloc(n2 * sizeof(int));
-    int *R = (int *)malloc(n3 * sizeof(int));
-
-    for (int i = 0; i < n1; i++) L[i] = arr[l + i];
-    for (int i = 0; i < n2; i++) M[i] = arr[mid1 + 1 + i];
-    for (int i = 0; i < n3; i++) R[i] = arr[mid2 + 1 + i];
-
-    int i = 0, j = 0, k = 0, idx = l;
-
-    // 3-way merge loop
-    while (i < n1 && j < n2 && k < n3) {
-        if (L[i] <= M[j] && L[i] <= R[k]) arr[idx++] = L[i++];
-        else if (M[j] <= L[i] && M[j] <= R[k]) arr[idx++] = M[j++];
-        else arr[idx++] = R[k++];
-    }
-
-    // Merge remaining elements of two sub-arrays
-    while (i < n1 && j < n2) arr[idx++] = (L[i] <= M[j]) ? L[i++] : M[j++];
-    while (j < n2 && k < n3) arr[idx++] = (M[j] <= R[k]) ? M[j++] : R[k++];
-    while (i < n1 && k < n3) arr[idx++] = (L[i] <= R[k]) ? L[i++] : R[k++];
-
-    // Merge remaining single sub-array elements
-    while (i < n1) arr[idx++] = L[i++];
-    while (j < n2) arr[idx++] = M[j++];
-    while (k < n3) arr[idx++] = R[k++];
-
-    free(L);
-    free(M);
-    free(R);
-}
-
-void merge_sort_3way(int arr[], int l, int r) {
-    if (l < r) {
-        if (r - l < 2) {
-            // For less than 3 elements, fallback to simple comparison
-            if (arr[l] > arr[r]) {
-                int temp = arr[l];
-                arr[l] = arr[r];
-                arr[r] = temp;
-            }
-            return;
+// Standard 2-way merge helper function
+void merge_two_arrays(int *arr1, int size1, int *arr2, int size2, int *result) {
+    int i = 0, j = 0, k = 0;
+    while (i < size1 && j < size2) {
+        if (arr1[i] <= arr2[j]) {
+            result[k++] = arr1[i++];
+        } else {
+            result[k++] = arr2[j++];
         }
-
-        int mid1 = l + (r - l) / 3;
-        int mid2 = l + 2 * (r - l) / 3;
-
-        merge_sort_3way(arr, l, mid1);
-        merge_sort_3way(arr, mid1 + 1, mid2);
-        merge_sort_3way(arr, mid2 + 1, r);
-
-        merge_3way(arr, l, mid1, mid2, r);
     }
+    while (i < size1) result[k++] = arr1[i++];
+    while (j < size2) result[k++] = arr2[j++];
+}
+
+// =================================================================
+// Method 1: Iterative Sequential Merging - O(k^2 * n)
+// =================================================================
+void merge_k_sequential(int **arrays, int k, int n, int *out) {
+    int current_size = n;
+    
+    // Copy the first array to out
+    for (int i = 0; i < n; i++) {
+        out[i] = arrays[0][i];
+    }
+    
+    // Iteratively merge the remaining (k - 1) arrays
+    for (int i = 1; i < k; i++) {
+        int *temp = (int *)malloc((current_size + n) * sizeof(int));
+        merge_two_arrays(out, current_size, arrays[i], n, temp);
+        
+        current_size += n;
+        for (int j = 0; j < current_size; j++) {
+            out[j] = temp[j];
+        }
+        free(temp);
+    }
+}
+
+// =================================================================
+// Method 2: Pairwise Divide & Conquer Merging - O(k * n * log k)
+// =================================================================
+void merge_k_pairwise(int **arrays, int k, int n, int *out) {
+    // Allocate space for working buffers
+    int **current = (int **)malloc(k * sizeof(int *));
+    int *sizes = (int *)malloc(k * sizeof(int));
+    
+    for (int i = 0; i < k; i++) {
+        current[i] = (int *)malloc(n * sizeof(int));
+        sizes[i] = n;
+        for (int j = 0; j < n; j++) {
+            current[i][j] = arrays[i][j];
+        }
+    }
+    
+    int active_k = k;
+    while (active_k > 1) {
+        int next_k = (active_k + 1) / 2;
+        int **next_level = (int **)malloc(next_k * sizeof(int *));
+        int *next_sizes = (int *)malloc(next_k * sizeof(int));
+        
+        int idx = 0;
+        for (int i = 0; i < active_k; i += 2) {
+            if (i + 1 < active_k) {
+                int new_size = sizes[i] + sizes[i + 1];
+                next_level[idx] = (int *)malloc(new_size * sizeof(int));
+                next_sizes[idx] = new_size;
+                merge_two_arrays(current[i], sizes[i], current[i + 1], sizes[i + 1], next_level[idx]);
+                free(current[i]);
+                free(current[i + 1]);
+            } else {
+                // Odd one out pass directly
+                next_level[idx] = current[i];
+                next_sizes[idx] = sizes[i];
+            }
+            idx++;
+        }
+        
+        free(current);
+        free(sizes);
+        current = next_level;
+        sizes = next_sizes;
+        active_k = next_k;
+    }
+    
+    // Copy final output
+    for (int i = 0; i < k * n; i++) {
+        out[i] = current[0][i];
+    }
+    
+    free(current[0]);
+    free(current);
+    free(sizes);
+}
+
+// Helper function to create sorted arrays
+int compare_ints(const void *a, const void *b) {
+    return (*(int *)a - *(int *)b);
 }
 
 int main() {
-    FILE *fp = fopen("q2_merge_data.txt", "w");
+    FILE *fp = fopen("q3_merge_data.txt", "w");
     if (!fp) {
-        printf("Error creating data file!\n");
+        printf("Error creating file!\n");
         return 1;
     }
 
     srand(42);
-    printf("Benchmarking Standard vs 3-Way Merge Sort...\n");
+    int n = 500; // Fixed size per array
 
-    for (int n = 10000; n <= 100000; n += 10000) {
-        int *orig = (int *)malloc(n * sizeof(int));
-        int *arr1 = (int *)malloc(n * sizeof(int));
-        int *arr2 = (int *)malloc(n * sizeof(int));
+    printf("Benchmarking Merging K Sorted Arrays (Fixed n = %d)...\n", n);
+    printf("k\tMethod 1 (O(k^2 n))\tMethod 2 (O(kn log k))\n");
 
-        for (int i = 0; i < n; i++) orig[i] = rand() % 100000;
+    for (int k = 10; k <= 200; k += 10) {
+        // Allocate and populate k sorted arrays
+        int **arrays = (int **)malloc(k * sizeof(int *));
+        for (int i = 0; i < k; i++) {
+            arrays[i] = (int *)malloc(n * sizeof(int));
+            for (int j = 0; j < n; j++) {
+                arrays[i][j] = rand() % 100000;
+            }
+            qsort(arrays[i], n, sizeof(int), compare_ints);
+        }
 
-        // Measure Standard 2-Way Merge Sort
-        copy_array(orig, arr1, n);
+        int *out1 = (int *)malloc(k * n * sizeof(int));
+        int *out2 = (int *)malloc(k * n * sizeof(int));
+
+        // Time Method 1
         clock_t start = clock();
-        for (int t = 0; t < 5; t++) {
-            copy_array(orig, arr1, n);
-            merge_sort_2way(arr1, 0, n - 1);
-        }
-        double t_2way = ((double)(clock() - start)) / CLOCKS_PER_SEC / 5.0;
+        merge_k_sequential(arrays, k, n, out1);
+        double t_m1 = ((double)(clock() - start)) / CLOCKS_PER_SEC;
 
-        // Measure Modified 3-Way Merge Sort
-        copy_array(orig, arr2, n);
+        // Time Method 2
         start = clock();
-        for (int t = 0; t < 5; t++) {
-            copy_array(orig, arr2, n);
-            merge_sort_3way(arr2, 0, n - 1);
-        }
-        double t_3way = ((double)(clock() - start)) / CLOCKS_PER_SEC / 5.0;
+        merge_k_pairwise(arrays, k, n, out2);
+        double t_m2 = ((double)(clock() - start)) / CLOCKS_PER_SEC;
 
-        fprintf(fp, "%d %f %f\n", n, t_2way, t_3way);
+        printf("%d\t%f s\t\t%f s\n", k, t_m1, t_m2);
+        fprintf(fp, "%d %f %f\n", k, t_m1, t_m2);
 
-        free(orig);
-        free(arr1);
-        free(arr2);
+        // Cleanup iteration
+        for (int i = 0; i < k; i++) free(arrays[i]);
+        free(arrays);
+        free(out1);
+        free(out2);
     }
 
     fclose(fp);
-    printf("Data generation complete. Plotting with Gnuplot...\n");
+    printf("Benchmarking completed. Plotting results...\n");
 
-    // Launch Gnuplot to display the comparison graph
+    // Launch Gnuplot to graph results
     FILE *gnuplot = popen("gnuplot -persistent", "w");
     if (gnuplot) {
-        fprintf(gnuplot, "set title 'Standard (2-Way) vs Modified (3-Way) Merge Sort'\n");
-        fprintf(gnuplot, "set xlabel 'Input Size (n)'\n");
+        fprintf(gnuplot, "set title 'Merging k Sorted Arrays: Method 1 vs Method 2'\n");
+        fprintf(gnuplot, "set xlabel 'Number of Arrays (k)'\n");
         fprintf(gnuplot, "set ylabel 'Execution Time (seconds)'\n");
         fprintf(gnuplot, "set grid\n");
-
-        // Color differentiate operations
-        fprintf(gnuplot, "plot 'q2_merge_data.txt' using 1:2 with linespoints lc rgb '#FF0000' lw 2 title 'Standard Merge Sort (2-Way)', \\\n");
-        fprintf(gnuplot, "     'q2_merge_data.txt' using 1:3 with linespoints lc rgb '#0000FF' lw 2 title 'Modified Merge Sort (3-Way)'\n");
-
+        fprintf(gnuplot, "plot 'q3_merge_data.txt' using 1:2 with linespoints lc rgb '#FF0000' lw 2 title 'Method 1: Sequential O(k^2 n)', \\\n");
+        fprintf(gnuplot, "     'q3_merge_data.txt' using 1:3 with linespoints lc rgb '#0000FF' lw 2 title 'Method 2: Pairwise O(kn log k)'\n");
         pclose(gnuplot);
     }
 
