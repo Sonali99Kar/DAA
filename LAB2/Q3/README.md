@@ -1,37 +1,42 @@
-# LAB 2 - Question 3: Standard Merge Sort vs. Modified 3-Way Merge Sort
+ # LAB 2 - Question 3: Merging $k$ Sorted Arrays ($k$-Way Merging Strategies)
 
 ## Overview
-This project benchmarks and compares the empirical performance of **Standard Merge Sort (2-Way)** against a **Modified Merge Sort (3-Way)** written in C:
+This project benchmarks and empirically validates two strategies for combining $k$ sorted arrays, each of size $n$, into a single fully sorted array of $kn$ elements:
 
-- **Standard Merge Sort (2-Way):** Recursively divides the array into 2 halves, sorts them, and merges them using a standard two-way merge function.
-- **Modified Merge Sort (3-Way):** Recursively divides the array into 3 equal segments, sorts each segment, and merges them using a three-way merge subroutine.
+1. **Method 1 (Iterative Sequential Merging):** Iteratively merges arrays one by one into an accumulating output array using standard two-way merging.
+2. **Method 2 (Pairwise Divide & Conquer Merging):** Pairs up adjacent arrays and merges them in logarithmic passes using a tree-like merge structure.
 
-The benchmark runs both algorithms over input array sizes ranging from $n = 10,000$ to $n = 100,000$, logs average execution times to a data file, and automatically plots an order-of-growth comparison graph via Gnuplot.
+The C program records execution times across varying numbers of arrays ($k$), writes benchmark data to a text file, and plots an order-of-growth comparison graph using Gnuplot.
 
 ---
 
-## Algorithm Performance Analysis
+## Theoretical Complexity & Analysis
 
-| Algorithm | Recurrence Relation | Time Complexity | Height of Recursion Tree |
-| :--- | :--- | :--- | :--- |
-| **Standard Merge Sort (2-Way)** | $T(n) = 2T(n/2) + \Theta(n)$ | $\Theta(n \log_2 n)$ | $\log_2 n$ |
-| **Modified Merge Sort (3-Way)** | $T(n) = 3T(n/3) + \Theta(n)$ | $\Theta(n \log_3 n)$ | $\log_3 n$ |
+### Method 1: Iterative Sequential Merging
+- **Process:** Merges Array 1 and 2 ($2n$), then the result with Array 3 ($3n$), up to Array $k$ ($kn$).
+- **Total Comparisons:** $\sum_{i=2}^{k} i \cdot n = O(k^2 n)$
+- **Worst-Case Running Time:** $O(k^2 n)$
 
-> Both algorithms share the same overall asymptotic time complexity of $\Theta(n \log n)$. While 3-way merge sort reduces the height of the recursion tree from $\log_2 n$ to $\log_3 n$, the additional comparisons required during the 3-way merge step per level balance out the total running time.
+### Method 2: Pairwise Divide & Conquer Merging
+- **Process:** Pairs up and merges $k$ arrays into $\frac{k}{2}$ arrays of size $2n$, repeating across $\lceil \log_2 k \rceil$ merge passes. Each pass processes $kn$ total elements.
+- **Total Comparisons:** $O(kn \log k)$
+- **Worst-Case Running Time:** $O(kn \log k)$
+
+> **Conclusion:** Method 2 dramatically outperforms Method 1 as $k$ grows because it reduces the depth of the merge passes from linear ($O(k)$ passes) to logarithmic ($O(\log k)$ passes).
 
 ---
 
 ## Files Included
 
-- [`lab2q3.c`](https://github.com/Sonali99Kar/DAA/blob/main/LAB2/Q3/lab2q3.c): C source file containing implementations for both 2-way and 3-way merge sort, benchmark loops, data logging, and Gnuplot piping.
-- `q2_merge_data.txt`: Generated output file containing execution times across varying values of $n$.
+- [`lab2q3.c`](https://github.com/Sonali99Kar/DAA/blob/main/LAB2/Q3/lab2q3.c): C source file implementing both $k$-way array merge algorithms, benchmark loops, and Gnuplot script execution.
+- `q3_merge_data.txt`: Generated benchmark output file storing execution times for varying values of $k$.
 
 ---
 
 ## Prerequisites
 
 - **C Compiler:** GCC (MinGW for Windows or native GCC for Linux/macOS)
-- **Gnuplot:** Required to display the performance graph automatically when running the program.
+- **Gnuplot:** Required to render the graph automatically upon running the compiled binary.
 
 ---
 
