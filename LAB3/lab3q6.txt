@@ -1,0 +1,8 @@
+SELECTION-SORT(A, n)
+1. for i = 1 to n - 1
+2.     minIndex = i
+3.     for j = i + 1 to n
+4.         if A[j] < A[minIndex]
+5.             minIndex = j
+6.     if minIndex != i
+7.         swap A[i] with A[minIndex]
