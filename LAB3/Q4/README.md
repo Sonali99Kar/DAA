@@ -1,31 +1,26 @@
-# Question 3: Maximum and Minimum using Divide & Conquer
+# Question 4: Matrix Multiplication using Strassen's Method
 
-This repository contains the algorithmic description and theoretical analysis for **Question 3** of the Design and Analysis of Algorithms (DAA) Lab-03 assignment.
+This repository contains the design and structural details for **Question 4** of the Design and Analysis of Algorithms (DAA) Lab-03 assignment.
 
 ---
 
 ## 📌 Problem Description
 
-The objective is to find both the maximum and minimum elements in an array of size $n$ using a **Divide and Conquer** approach, ensuring that the total number of comparisons is bounded by $\frac{3n}{2} - 2$.
+The task is to implement matrix multiplication for two $n \times n$ square matrices using **Strassen’s Divide and Conquer algorithm**, which reduces the number of sub-matrix multiplications to achieve a lower asymptotic time complexity.
 
 ---
 
 ## 💡 Algorithmic Strategy
 
-Instead of scanning linearly (which takes $2n - 2$ comparisons in the worst case):
+Standard matrix multiplication takes $O(n^3)$ operations via 8 recursive sub-matrix multiplications. Strassen's algorithm computes 7 intermediate matrix products ($P_1$ through $P_7$) using additions and subtractions:
 
-1. **Base Cases**:
-   * If $n = 1$, the single element is both `max` and `min` (0 comparisons).
-   * If $n = 2$, compare the two elements once to assign `max` and `min` (1 comparison).
-2. **Divide**: Split the array into two equal halves.
-3. **Conquer**: Recursively find the (`max`, `min`) of the left and right sub-arrays.
-4. **Combine**: Compare the two maximums and two minimums (2 comparisons) to get the overall `max` and `min`.
+* **Divide**: Partition matrices $A$ and $B$ into four $n/2 \times n/2$ sub-matrices.
+* **Compute Products**: Form 7 specific products ($P_1$ to $P_7$) recursively.
+* **Combine**: Combine $P_1 \dots P_7$ to construct the four sub-matrices of the product matrix $C$.
 
 ---
 
-## ⏱️ Comparison Bound Proof
+## ⏱️ Complexity Analysis
 
-* **Recurrence Relation**: $T(n) = 2T(n/2) + 2$ for $n > 2$.
-* **Total Comparisons**:
-  * For $n$ being a power of 2, $T(n) = \frac{3n}{2} - 2$.
-* **Efficiency**: This reduces the comparison count by $25\%$ compared to the straightforward linear approach.
+* **Recurrence Relation**: $T(n) = 7T(n/2) + O(n^2)$
+* **Time Complexity**: $\Theta(n^{\log_2 7}) \approx \Theta(n^{2.81})$
