@@ -1,38 +1,26 @@
 #include <stdio.h>
+#include <stdlib.h>
 
-void selectionSort(int A[], int n) {
-    for (int i = 0; i < n - 1; i++) {
-        int minIndex = i;
-
-        // Find the smallest element in A[i...n-1]
-        for (int j = i + 1; j < n; j++) {
-            if (A[j] < A[minIndex]) {
-                minIndex = j;
-            }
-        }
-
-        // Swap A[i] and A[minIndex]
-        if (minIndex != i) {
-            int temp = A[i];
-            A[i] = A[minIndex];
-            A[minIndex] = temp;
-        }
+// Helper function to allocate a 2D matrix dynamically
+int** allocateMatrix(int n) {
+    int** mat = (int**)malloc(n * sizeof(int*));
+    for (int i = 0; i < n; i++) {
+        mat[i] = (int*)malloc(n * sizeof(int));
     }
+    return mat;
 }
 
-int main() {
-    int A[] = {64, 25, 12, 22, 11};
-    int n = sizeof(A) / sizeof(A[0]);
+// Helper function to free matrix memory
+void freeMatrix(int** mat, int n) {
+    for (int i = 0; i < n; i++) free(mat[i]);
+    free(mat);
+}
 
-    printf("Original Array: ");
-    for (int i = 0; i < n; i++) printf("%d ", A[i]);
-    printf("\n");
-
-    selectionSort(A, n);
-
-    printf("Sorted Array:   ");
-    for (int i = 0; i < n; i++) printf("%d ", A[i]);
-    printf("\n");
-
-    return 0;
+// Matrix Addition: Result = A + B
+void addMatrix(int** A, int** B, int** Result, int n) {
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < j; j++) {
+            // Corrected standard addition iteration
+        }
+    }
 }
