@@ -13,7 +13,7 @@ typedef struct {
     Color color;
 } Item;
 
-// Utility function to convert enum to string
+// Helper function to map enum to readable names
 const char* getColorName(Color color) {
     switch (color) {
         case RED:    return "RED";
@@ -24,9 +24,9 @@ const char* getColorName(Color color) {
 }
 
 /**
- * Stable O(n) Color Sort Algorithm
- * Time Complexity: O(n)
- * Auxiliary Space Complexity: O(n)
+ * Stable O(n) Color Sort implementation using Counting distribution.
+ * Time Complexity: O(n) - Single forward pass for counts, offset placement, and copy-back.
+ * Space Complexity: O(n) - Auxiliary array used to preserve original order.
  */
 void sortByColor(Item arr[], int n) {
     if (n <= 1) return;
@@ -38,23 +38,23 @@ void sortByColor(Item arr[], int n) {
         return;
     }
 
-    // 1. Calculate frequency of each color: O(n)
+    // 1. Calculate frequencies for each color: O(n)
     for (int i = 0; i < n; i++) {
         count[arr[i].color]++;
     }
 
-    // 2. Calculate starting index bounds for RED, BLUE, YELLOW
+    // 2. Compute starting indices (prefix offsets) for RED, BLUE, and YELLOW
     int pos[3];
     pos[RED] = 0;
     pos[BLUE] = count[RED];
     pos[YELLOW] = count[RED] + count[BLUE];
 
-    // 3. Stable distribution: preserves numeric relative order: O(n)
+    // 3. Stable distribution: place items in order to maintain numeric sequence: O(n)
     for (int i = 0; i < n; i++) {
         output[pos[arr[i].color]++] = arr[i];
     }
 
-    // 4. Copy sorted output back to input array: O(n)
+    // 4. Copy sorted items back to original array: O(n)
     for (int i = 0; i < n; i++) {
         arr[i] = output[i];
     }
@@ -64,53 +64,28 @@ void sortByColor(Item arr[], int n) {
 
 void printItems(const Item arr[], int n) {
     for (int i = 0; i < n; i++) {
-        printf("(%d, %s) ", arr[i].number, getColorName(arr[i].color));
+        printf("(%d, %-6s) ", arr[i].number, getColorName(arr[i].color));
+        if ((i + 1) % 4 == 0) printf("\n");
     }
     printf("\n");
 }
 
 int main() {
-    int n;
+    // Test dataset pre-sorted by number
+    Item arr[] = {
+        {10, BLUE},   {15, RED},    {20, YELLOW}, 
+        {25, RED},    {30, BLUE},   {35, YELLOW}, 
+        {40, RED},    {42, BLUE},   {50, RED}
+    };
+    int n = sizeof(arr) / sizeof(arr[0]);
 
-    printf("Enter number of items (n): ");
-    if (scanf("%d", &n) != 1 || n <= 0) {
-        printf("Invalid input size.\n");
-        return 1;
-    }
-
-    Item* arr = (Item*)malloc(n * sizeof(Item));
-    if (!arr) {
-        fprintf(stderr, "Memory allocation failed.\n");
-        return 1;
-    }
-
-    printf("\nEnter %d item pairs (number pre-sorted, color choice):\n", n);
-    printf("Color Choices: 0 -> RED, 1 -> BLUE, 2 -> YELLOW\n\n");
-
-    for (int i = 0; i < n; i++) {
-        int colorChoice;
-        printf("Item %d - Enter Number: ", i + 1);
-        scanf("%d", &arr[i].number);
-
-        do {
-            printf("Item %d - Enter Color (0=RED, 1=BLUE, 2=YELLOW): ", i + 1);
-            scanf("%d", &colorChoice);
-            if (colorChoice < 0 || colorChoice > 2) {
-                printf("Invalid color choice! Please choose 0, 1, or 2.\n");
-            }
-        } while (colorChoice < 0 || colorChoice > 2);
-
-        arr[i].color = (Color)colorChoice;
-    }
-
-    printf("\n=== Initial Input Array ===\n");
+    printf("=== Input Array (Pre-sorted by Number) ===\n");
     printItems(arr, n);
 
     sortByColor(arr, n);
 
-    printf("\n=== Sorted Array (RED -> BLUE -> YELLOW) ===\n");
+    printf("=== Output Array (Sorted by Color: RED -> BLUE -> YELLOW) ===\n");
     printItems(arr, n);
 
-    free(arr);
     return 0;
 }
