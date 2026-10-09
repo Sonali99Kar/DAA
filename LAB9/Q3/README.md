@@ -1,0 +1,7 @@
+# Design and Analysis of Algorithm (DAA) - Lab 09
+
+**Topic:** Questions based on the greedy design paradigm (Difficulty level: medium and hard)
+
+---
+
+3. **[Minimum Initial Fuel (Reverse Greedy)]** A vehicle needs to reach the target $D$ starting with fuel $F$. Along the way are stations $(d_i, f_i)$ (distance from origin and refuel amount). What is the minimum number of refuelling stops required to reach the target? By choosing the proper input representation, write a program in C to validate your algorithm and derive the complexity analysis of your algorithm.
