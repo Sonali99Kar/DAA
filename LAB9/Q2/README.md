@@ -1,0 +1,7 @@
+# Design and Analysis of Algorithm (DAA) - Lab 09
+
+**Topic:** Questions based on the greedy design paradigm (Difficulty level: medium and hard)
+
+---
+
+2. **[Huffman Coding]** Given symbol frequencies, construct a prefix-free binary code of minimum expected length, and output the canonical Huffman codebook (where codes are ordered lexicographically by length). By choosing the proper input representation, write a program in C to validate your algorithm and derive the complexity analysis of your algorithm.
