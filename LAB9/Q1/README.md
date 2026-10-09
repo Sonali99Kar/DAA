@@ -1,0 +1,5 @@
+# Design and Analysis of Algorithm (DAA) - Lab 09
+
+
+
+1. **[Fractional Knapsack with Deterioration Rate]** You have $n$ items with base values $v_i$, weights $w_i$, and decay rates $\lambda_i > 0$. If an item is consumed at time $t$, its effective value density decays to $(v_i / w_i) - \lambda_i \cdot t$. Knapsack capacity is $W$. Determine the optimal scheduling order and fractional choices to maximise total value. By choosing the proper input representation, write a program in C to validate your algorithm and derive the complexity analysis of your algorithm.
