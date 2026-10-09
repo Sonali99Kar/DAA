@@ -1,0 +1,7 @@
+# Design and Analysis of Algorithm (DAA) - Lab 09
+
+**Topic:** Questions based on the greedy design paradigm (Difficulty level: medium and hard)
+
+---
+
+8. **[Minimum Number of Meeting Rooms]** Given an array of meeting time intervals consisting of start and end times $[[s_1, e_1], [s_2, e_2], \dots]$, find the minimum number of conference rooms required. By choosing the proper input representation, write a program in C to validate your procedures and derive the complexity analysis of your algorithm.
