@@ -1,0 +1,7 @@
+# Design and Analysis of Algorithm (DAA) - Lab 09
+
+**Topic:** Questions based on the greedy design paradigm (Difficulty level: medium and hard)
+
+---
+
+4. **[Minimum Cost to Connect Sticks]** You have sticks of lengths $L_1, L_2, \dots, L_n$. Connecting two sticks of lengths $x$ and $y$ costs $x + y$, resulting in a single stick of length $x + y$. Find the minimum total cost to connect all sticks into one. By choosing the proper input representation, write a program in C to validate your algorithm and derive the complexity analysis of your algorithm.
